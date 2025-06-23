@@ -10,13 +10,22 @@ int main()
 {
 
     signal(SIGINT, INTHandler);
+
+    char buff[64];
     
-    float fps = 1 / 60;
+    float fps = 1;
+    int i = 0;
     while (keepRunning) {
+
+	/* Handle screen clearing */
 	printf("\033[H");
 	printf("\033[?25l");
 	printf("\033[2J");
-	printf("Hello, World!\n");
+	buff[i] = '+';
+	printf("%s\n", buff);
+	++i;
+
+	/* Sleep for 1/60 */
 	sleep(fps);
     }
     
