@@ -1,31 +1,35 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
+#include <time.h>
 
 static volatile int keepRunning = 1;
 
 void INTHandler(int sig);
 
-int main()
+int main(void)
 {
 
     signal(SIGINT, INTHandler);
 
-    char buff[64];
+    time_t t;
+    struct tm b_time;
     
     float fps = 1;
-    int i = 0;
+
     while (keepRunning) {
 	/* Handle screen clearing */
 	printf("\033[10;10H");
 	printf("\033[?25l");
 	printf("\033[2J");
 
-	buff[i] = '+';
-	printf("%s\n", buff);
-	++i;
+	t = time(NULL);
+	b_time = *localtime(&t);
 
-	/* Sleep for 1/60 */
+	printf("now: %d-%02d-%02d %02d:%02d:%02d\n", b_time.tm_year + 1900
+	       , b_time.tm_mon + 1, b_time.tm_mday, b_time.tm_hour, b_time.tm_min, b_time.tm_sec);
+	
+	/* Sleep for 1 seconds */
 	sleep(fps);
     }
     
