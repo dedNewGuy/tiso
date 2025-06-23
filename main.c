@@ -16,11 +16,11 @@ int main()
     float fps = 1;
     int i = 0;
     while (keepRunning) {
-
 	/* Handle screen clearing */
-	printf("\033[H");
+	printf("\033[10;10H");
 	printf("\033[?25l");
 	printf("\033[2J");
+
 	buff[i] = '+';
 	printf("%s\n", buff);
 	++i;
