@@ -1,45 +1,86 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <signal.h>
-#include <time.h>
+#include "term.h"
 
-static volatile int keepRunning = 1;
+static struct termios   save_termios;
+static int              term_saved;
 
-void INTHandler(int sig);
+int tty_raw(int fd) {       /* RAW! mode */
+    struct termios  buf;
 
-int main(void)
-{
+    if (tcgetattr(fd, &save_termios) < 0) /* get the original state */
+        return -1;
 
-    signal(SIGINT, INTHandler);
+    buf = save_termios;
 
-    time_t t;
-    struct tm b_time;
-    
-    float fps = 1;
+    buf.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+                    /* echo off, canonical mode off, extended input
+                       processing off, signal chars off */
 
-    while (keepRunning) {
-	/* Handle screen clearing */
-	printf("\033[10;10H");
-	printf("\033[?25l");
-	printf("\033[2J");
+    buf.c_iflag &= ~(BRKINT | ICRNL | ISTRIP | IXON);
+                    /* no SIGINT on BREAK, CR-toNL off, input parity
+                       check off, don't strip the 8th bit on input,
+                       ouput flow control off */
 
-	t = time(NULL);
-	b_time = *localtime(&t);
+    buf.c_cflag &= ~(CSIZE | PARENB);
+                    /* clear size bits, parity checking off */
 
-	printf("now: %d-%02d-%02d %02d:%02d:%02d\n", b_time.tm_year + 1900
-	       , b_time.tm_mon + 1, b_time.tm_mday, b_time.tm_hour, b_time.tm_min, b_time.tm_sec);
-	
-	/* Sleep for 1 seconds */
-	sleep(fps);
-    }
-    
+    buf.c_cflag |= CS8;
+                    /* set 8 bits/char */
+
+    buf.c_oflag &= ~(OPOST);
+                    /* output processing off */
+
+    buf.c_cc[VMIN] = 1;  /* 1 byte at a time */
+    buf.c_cc[VTIME] = 0; /* no timer on input */
+
+    if (tcsetattr(fd, TCSAFLUSH, &buf) < 0)
+        return -1;
+
+    term_saved = 1;
+
     return 0;
 }
 
 
-void INTHandler(int sig)
+int tty_reset(int fd) { /* set it to normal! */
+    if (term_saved)
+        if (tcsetattr(fd, TCSAFLUSH, &save_termios) < 0)
+            return -1;
+
+    return 0;
+}
+
+int main()
 {
-    signal(sig, SIG_IGN);
-    keepRunning = 0;
-    printf("\033[?25h");   
+    char buf[5];
+    size_t nbytes;
+    float sleep_time = 1;
+    int keepRunning = 1;
+
+    tty_raw(STDIN_FILENO);
+
+    nbytes = sizeof(buf);
+    while (keepRunning) {
+	printf(CURSOR_HIDE);
+	printf(SCREEN_PUSH);
+	printf(CURSOR_HIDE);
+	printf(SCREEN_CLEAR);
+	printf(CURSOR_HOME);
+
+	printf("Hello, World!\n");
+	
+	read(STDIN_FILENO, buf, nbytes);
+	if ((int)buf[0] == 3 || buf[0] == 'q') {
+	    keepRunning = 0;
+	}
+
+	term_sleep(sleep_time);
+    }
+
+    tty_reset(STDIN_FILENO);
+    
+    printf(SCREEN_POP);
+    printf(CURSOR_SHOW);
+    
+    return 0;
 }
