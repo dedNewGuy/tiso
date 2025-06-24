@@ -13,5 +13,8 @@
 #define CURSOR_SHOW "\033[?25h"
 
 #define term_sleep(seconds) (sleep(seconds))
+
+int tty_raw(int fd);
+int tty_reset(int fd);
     
 #endif //_TERM_H
