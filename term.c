@@ -1,6 +1,7 @@
 /*
   This code was copied from Mark Harrison in StackOverflow to change
-  terminal mode to raw mode and reset it back to cooked mode.
+  terminal mode to raw mode and reset it back to cooked mode. Which was copied from
+  W. Richard Stevens' Unix Programming book
   https://stackoverflow.com/a/220876
 */
 
