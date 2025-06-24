@@ -13,6 +13,9 @@ int main()
     float sleep_time = 1;
     int keepRunning = 1;
 
+    time_t t;
+    struct tm b_time;
+
     assert(tty_raw(STDIN_FILENO) != -1);
 
     pthread_create(&input_thread, NULL, input_handling, &keepRunning);
@@ -24,7 +27,11 @@ int main()
 	printf(SCREEN_CLEAR);
 	printf(CURSOR_HOME);
 
-	printf("Hello, World!\n");
+	t = time(NULL);
+	b_time = *localtime(&t);
+
+	printf("now: %d-%02d-%02d %02d:%02d:%02d\n", b_time.tm_year + 1900
+	       , b_time.tm_mon + 1, b_time.tm_mday, b_time.tm_hour, b_time.tm_min, b_time.tm_sec);
 
 	term_sleep(sleep_time);
     }
