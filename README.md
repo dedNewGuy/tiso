@@ -7,8 +7,11 @@
 ## Basic idea
 
 ```
-Usage
-tiso | Display time left before the next prayer time 
-tiso -timer n | Set timer to `n` minute in descending
-tiso -h | Display this help messages
+Usage: tiso [OPTIONS]
+
+tiso Display time left before the next prayer time 
+
+OPTIONS:
+-t <h:m:s>  Set timer to <h:m:s> and in descending
+	-h  Display this help messages
 ```
