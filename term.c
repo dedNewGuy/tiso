@@ -12,7 +12,7 @@ int tty_noncanon(void)
 
     buf = save_termios;
 
-    buf.c_lflag &= ~(ECHO | ICANON);
+    buf.c_lflag &= ~(ECHO | ICANON | ISIG);
 
     /*
       Here, read is block until read() get 1 byte of input
