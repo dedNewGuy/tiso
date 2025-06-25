@@ -2,4 +2,4 @@
 
 set -xe
 
-clang -Wall -Wextra -o main main.c term.c
+clang -Wall -Wextra -o tiso tiso.c term.c
