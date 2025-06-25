@@ -16,7 +16,7 @@ int main()
     time_t t;
     struct tm b_time;
 
-    assert(tty_raw(STDIN_FILENO) != -1);
+    assert(tty_noncanon() != -1);
 
     pthread_create(&input_thread, NULL, input_handling, &keepRunning);
 
@@ -50,7 +50,7 @@ void *input_handling(void *keepRunning)
     while (run) {
 	read(STDIN_FILENO, buf, nbytes);
 	if ((int)buf[0] == 3 || buf[0] == 'q') {
-	    assert(tty_reset(STDIN_FILENO) != -1);
+	    assert(reset_tty_mode() != -1);
     
 	    printf(SCREEN_POP);
 	    printf(CURSOR_SHOW);

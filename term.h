@@ -14,7 +14,7 @@
 
 #define term_sleep(seconds) (sleep(seconds))
 
-int tty_raw(int fd);
-int tty_reset(int fd);
+int tty_noncanon();
+int reset_tty_mode();
     
 #endif //_TERM_H
