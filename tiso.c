@@ -8,8 +8,9 @@ void *input_handling(void *arg);
 void restore_term_state(void);
 
 void timer_descend(int *hour, int *minute, int *second);
+void render_timer(char frame_buffer[], int hour, int minute, int second);
 
-int main(void)
+int main(int argc, char **argv)
 {
     pthread_t input_thread;
     
@@ -33,10 +34,9 @@ int main(void)
 	printf(SCREEN_CLEAR);
 	printf(CURSOR_HOME);
 
-	sprintf(frame_buffer, "%02d:%02d:%02d", hour, minute, second);
-	printf("%s\n", frame_buffer);
+	render_timer(frame_buffer, hour, minute, second);
 
-	term_sleep(sleep_time);
+	term_sleep(sleep_time); // Sleep for sleep_time second
 
 	timer_descend(&hour, &minute, &second);
     }
@@ -89,4 +89,11 @@ void timer_descend(int *hour, int *minute, int *second)
 	    }
 	}
     }
+}
+
+void render_timer(char frame_buffer[], int hour, int minute, int second)
+{
+    sprintf(frame_buffer, "%02d:%02d:%02d", hour, minute, second);
+    printf("%s\n", frame_buffer);
+
 }
