@@ -2,16 +2,58 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <pthread.h>
+#include <string.h>
 #include "term.h"
+
+#define log_errorf(format, __VA_ARGS__)		\
+    fprintf(stderr, "[ERROR] ");		\
+    fprintf(stderr, format, __VA_ARGS__);	\
+    fprintf(stderr, "\n");
+
+#define log_error(format)			\
+    fprintf(stderr, "[ERROR] ");		\
+    fprintf(stderr, format);			\
+    fprintf(stderr, "\n");
 
 void *input_handling(void *arg);
 void restore_term_state(void);
 
 void timer_descend(int *hour, int *minute, int *second);
 void render_timer(char frame_buffer[], int hour, int minute, int second);
+int is_time_correct_format(char *val);
 
 int main(int argc, char **argv)
 {
+
+    int hour = 0;
+    int minute = 0;
+    int second = 0;
+
+    if (argc == 3) {
+	char *opt = argv[1];
+	if (strcmp(opt, "-t") != 0) {
+	    log_errorf("Unknown option supplied %s", opt);
+	    exit(1);
+	}
+	char *timer_val = argv[2];
+	char *hour_str   = strtok(timer_val, ":");
+	char *minute_str = strtok(NULL, ":");
+	char *second_str = strtok(NULL, ":");
+	
+	if (is_time_correct_format(hour_str) && is_time_correct_format(minute_str)
+	    && is_time_correct_format(second_str)) {
+	    hour = atoi(hour_str);
+	    minute = atoi(minute_str);
+	    second = atoi(second_str);
+	} else {
+	    log_error("Only digit is allowed");
+	    exit(1);
+	}
+    } else {
+	log_error("No Option supplied");
+	exit(1);
+    }
+    
     pthread_t input_thread;
     
     float sleep_time = 1;
@@ -21,9 +63,6 @@ int main(int argc, char **argv)
 
     pthread_create(&input_thread, NULL, input_handling, &keepRunning);
 
-    int hour = 1;
-    int minute = 0;
-    int second = 0;
 
     char frame_buffer[64];
 
@@ -96,4 +135,18 @@ void render_timer(char frame_buffer[], int hour, int minute, int second)
     sprintf(frame_buffer, "%02d:%02d:%02d", hour, minute, second);
     printf("%s\n", frame_buffer);
 
+}
+
+int is_time_correct_format(char *val)
+{
+    int len = strlen(val);
+    int valid;
+    for (int i = 0; i < len; ++i) {
+	if (val[i] >= '0' && val[i] <= '9') {
+	    valid = 1;
+	} else {
+	    valid = 0;
+	}
+    }
+    return valid;
 }
