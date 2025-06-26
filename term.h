@@ -16,5 +16,24 @@
 
 int tty_noncanon();
 int reset_tty_mode();
+
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+} viewport_t;
+
+viewport_t init_viewport();
+
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+} canvas_t;
+
+canvas_t init_canvas(int x, int y, int width, int height);
+void canvas_render_box(canvas_t canvas, int x, int y);
     
 #endif //_TERM_H

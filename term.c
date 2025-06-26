@@ -1,3 +1,6 @@
+#include <sys/ioctl.h>
+#include <stdio.h>
+
 #include "term.h"
 
 static struct termios   save_termios;
@@ -36,4 +39,36 @@ int reset_tty_mode(void)
             return -1;
 
     return 0;
+}
+
+viewport_t init_viewport()
+{
+    struct winsize win;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+    return (viewport_t){
+	.x = 0,
+	.y = 0,
+	.height = win.ws_row,
+	.width = win.ws_col,
+    };
+}
+
+canvas_t init_canvas(int x, int y, int width, int height)
+{
+    canvas_t canvas = {
+	.x = x,
+	.y = y,
+	.width = width,
+	.height = height
+    };
+
+    return canvas;
+}
+
+#define PIXEL "\u2588\n"
+
+void canvas_render_box(canvas_t canvas, int x, int y)
+{
+    printf("\033[%d;%dH", canvas.y + y, canvas.x + x);
+    printf(PIXEL);
 }

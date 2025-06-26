@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <pthread.h>
 #include <string.h>
+
 #include "term.h"
 
 #define log_errorf(...)				\
@@ -17,9 +18,19 @@ void timer_descend(int *hour, int *minute, int *second);
 void render_timer(char frame_buffer[], int hour, int minute, int second);
 int is_time_correct_format(char *val);
 
+#define CANVAS_OFFSET_X 10
+#define CANVAS_OFFSET_Y 5
+
+
+
 int main(int argc, char **argv)
 {
-
+    viewport_t viewport = init_viewport();
+    canvas_t canvas = init_canvas(viewport.x + CANVAS_OFFSET_X,
+				  viewport.y + CANVAS_OFFSET_Y,
+				  viewport.width - CANVAS_OFFSET_X,
+				  viewport.height - CANVAS_OFFSET_Y);
+    
     int hour = 0;
     int minute = 0;
     int second = 0;
@@ -70,11 +81,18 @@ int main(int argc, char **argv)
 	printf(SCREEN_CLEAR);
 	printf(CURSOR_HOME);
 
-	render_timer(frame_buffer, hour, minute, second);
+	/* render_timer(frame_buffer, hour, minute, second); */
+
+	for (int y = 0; y < 3; ++y) {
+	    canvas_render_box(canvas, 0, y);
+	    canvas_render_box(canvas, 1, y);
+	    canvas_render_box(canvas, 2, y);
+	    canvas_render_box(canvas, 3, y);
+	}
 
 	term_sleep(sleep_time); // Sleep for sleep_time second
 
-	timer_descend(&hour, &minute, &second);
+	/* timer_descend(&hour, &minute, &second); */
     }
 
     
@@ -131,7 +149,6 @@ void render_timer(char frame_buffer[], int hour, int minute, int second)
 {
     sprintf(frame_buffer, "%02d:%02d:%02d", hour, minute, second);
     printf("%s\n", frame_buffer);
-
 }
 
 int is_time_correct_format(char *val)
