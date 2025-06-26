@@ -72,3 +72,14 @@ void canvas_render_box(canvas_t canvas, int x, int y)
     printf("\033[%d;%dH", canvas.y + y, canvas.x + x);
     printf(PIXEL);
 }
+
+void canvas_render_rect(canvas_t canvas, rect_t rect)
+{
+    for (int row = 0; row < rect.height; ++row) {
+	int y = row + rect.y;
+	for (int col = 0; col < rect.width; ++col) {
+	    int x = col + rect.x;
+	    canvas_render_box(canvas, x, y);
+	}
+    }
+}

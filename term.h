@@ -33,7 +33,15 @@ typedef struct {
     int height;
 } canvas_t;
 
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+} rect_t;
+
 canvas_t init_canvas(int x, int y, int width, int height);
 void canvas_render_box(canvas_t canvas, int x, int y);
+void canvas_render_rect(canvas_t canvas, rect_t rect);
     
 #endif //_TERM_H

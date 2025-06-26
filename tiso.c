@@ -74,6 +74,13 @@ int main(int argc, char **argv)
 
     char frame_buffer[64];
 
+    rect_t rect1 = {
+	.x = 0,
+	.y = 0,
+	.width = 5,
+	.height = 5
+    };
+
     while (keepRunning) {
 	printf(CURSOR_HIDE);
 	printf(SCREEN_PUSH);
@@ -83,13 +90,9 @@ int main(int argc, char **argv)
 
 	/* render_timer(frame_buffer, hour, minute, second); */
 
-	for (int y = 0; y < 3; ++y) {
-	    canvas_render_box(canvas, 0, y);
-	    canvas_render_box(canvas, 1, y);
-	    canvas_render_box(canvas, 2, y);
-	    canvas_render_box(canvas, 3, y);
-	}
-
+	canvas_render_rect(canvas, rect1);
+	rect1.x += 1;
+	
 	term_sleep(sleep_time); // Sleep for sleep_time second
 
 	/* timer_descend(&hour, &minute, &second); */
