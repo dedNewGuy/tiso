@@ -5,14 +5,9 @@
 #include <string.h>
 #include "term.h"
 
-#define log_errorf(format, __VA_ARGS__)		\
+#define log_errorf(...)				\
     fprintf(stderr, "[ERROR] ");		\
-    fprintf(stderr, format, __VA_ARGS__);	\
-    fprintf(stderr, "\n");
-
-#define log_error(format)			\
-    fprintf(stderr, "[ERROR] ");		\
-    fprintf(stderr, format);			\
+    fprintf(stderr, __VA_ARGS__);		\
     fprintf(stderr, "\n");
 
 void *input_handling(void *arg);
@@ -36,6 +31,8 @@ int main(int argc, char **argv)
 	    exit(1);
 	}
 	char *timer_val = argv[2];
+	// TODO: Handle different format. Currently it hardcoded into strictly HH:MM:SS.
+	// Causing Seg fault if given otherwise. Need proper error handling
 	char *hour_str   = strtok(timer_val, ":");
 	char *minute_str = strtok(NULL, ":");
 	char *second_str = strtok(NULL, ":");
@@ -46,11 +43,11 @@ int main(int argc, char **argv)
 	    minute = atoi(minute_str);
 	    second = atoi(second_str);
 	} else {
-	    log_error("Only digit is allowed");
+	    log_errorf("Only digit is allowed");
 	    exit(1);
 	}
     } else {
-	log_error("No Option supplied");
+	log_errorf("No Option supplied");
 	exit(1);
     }
     
