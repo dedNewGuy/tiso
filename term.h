@@ -54,10 +54,18 @@ rect_t init_rect(int x, int y, int width, int height, int is_visible);
 
 typedef struct {
     int top;
+    int top_left_corner;
+    int top_right_corner;
     int top_left;
     int top_right;
+    
     int middle;
+    int middle_left_corner;
+    int middle_right_corner;
+    
     int bottom;
+    int bottom_left_corner;
+    int bottom_right_corner;        
     int bottom_left;
     int bottom_right;
 } digit_rect_t;
@@ -66,7 +74,7 @@ canvas_t init_canvas(viewport_t viewport, int segment_x, int segment_y);
 canvas_t canvas_resize(viewport_t *viewport);
 void canvas_render_box(canvas_t canvas, int x, int y);
 void canvas_render_rect(canvas_t canvas, rect_t rect);
-void canvas_render_digit(canvas_t canvas, int offset);
+void canvas_render_digit(canvas_t canvas, int offset, digit_rect_t digit_rect);
 void canvas_render_cell(canvas_t canvas, int index_x, int index_y);
 
 #endif //_TERM_H

@@ -134,36 +134,67 @@ void canvas_render_cell(canvas_t canvas, int index_x, int index_y)
     canvas_render_rect(canvas, rect);
 }
 
-void canvas_render_digit(canvas_t canvas, int offset)
+void canvas_render_digit(canvas_t canvas, int offset, digit_rect_t digit_rect)
 {
-    	// TOP
+
+    // TOP LEFT CORNER
+    if (digit_rect.top_left_corner)
 	canvas_render_cell(canvas, 0 + offset, 0);
+    
+    // TOP
+    if (digit_rect.top)
 	canvas_render_cell(canvas, 1 + offset, 0);
+
+    // TOP RIGHT CORNER
+    if (digit_rect.top_right_corner)
 	canvas_render_cell(canvas, 2 + offset, 0);
 
-	// TOP LEFT
+    // TOP LEFT
+    if (digit_rect.top_left) {
 	canvas_render_cell(canvas, 0 + offset, 1);
 	canvas_render_cell(canvas, 0 + offset, 2);
+    }
 
-	// TOP RIGHT
+    // TOP RIGHT
+    if (digit_rect.top_right) {
 	canvas_render_cell(canvas, 2 + offset, 1);
 	canvas_render_cell(canvas, 2 + offset, 2);
+    }
 
-	// MIDDLE
+    // MIDDLE LEFT CORNER
+    if (digit_rect.middle_left_corner)
 	canvas_render_cell(canvas, 0 + offset, 3);
+    
+    // MIDDLE
+    if (digit_rect.middle)
 	canvas_render_cell(canvas, 1 + offset, 3);
+
+    // MIDDLE RIGHT CORNER
+    if (digit_rect.middle_right_corner)
 	canvas_render_cell(canvas, 2 + offset, 3);
 
-	// BOTTOM LEFT
+    // BOTTOM LEFT
+    if (digit_rect.bottom_left) {
 	canvas_render_cell(canvas, 0 + offset, 4);
 	canvas_render_cell(canvas, 0 + offset, 5);
+    }
 
-	// BOTTOM RIGHT
+    // BOTTOM RIGHT
+    if (digit_rect.bottom_right) {
 	canvas_render_cell(canvas, 2 + offset, 4);
 	canvas_render_cell(canvas, 2 + offset, 5);
+    }
 
-	// BOTTOM
+    // BOTTOM LEFT CORNER
+    if (digit_rect.bottom_left_corner)
 	canvas_render_cell(canvas, 0 + offset, 6);
+
+    // BOTTOM
+    if (digit_rect.bottom) {
 	canvas_render_cell(canvas, 1 + offset, 6);
+    }
+    
+    // BOTTOM RIGHT CORNER
+    if (digit_rect.bottom_right_corner)    
 	canvas_render_cell(canvas, 2 + offset, 6);
 }
