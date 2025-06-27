@@ -198,3 +198,83 @@ void canvas_render_digit(canvas_t canvas, int offset, digit_rect_t digit_rect)
     if (digit_rect.bottom_right_corner)    
 	canvas_render_cell(canvas, 2 + offset, 6);
 }
+
+void digit_rect_set_num(digit_rect_t *digit_rect, int number)
+{
+    switch(number) {
+    case 0:
+	digit_rect->middle = 0;
+	break;
+    case 1:
+	digit_rect->top = 0;
+	digit_rect->top_left_corner = 0;
+	digit_rect->top_left = 0;
+    
+	digit_rect->middle = 0;
+	digit_rect->middle_left_corner = 0;
+    
+	digit_rect->bottom_left_corner = 0;
+	digit_rect->bottom = 0;
+	digit_rect->bottom_left = 0;
+	break;
+    case 2:
+	digit_rect->top_left = 0;
+	digit_rect->bottom_right = 0;
+	break;
+    case 3:
+	digit_rect->top_left = 0;
+	digit_rect->bottom_left = 0;
+	break;
+    case 4:
+	digit_rect->top = 0;
+	digit_rect->bottom_left = 0;
+	digit_rect->bottom_left_corner = 0;
+	digit_rect->bottom = 0;
+	break;
+    case 5:
+	digit_rect->top_right = 0;
+	digit_rect->bottom_left = 0;
+	break;
+    case 6:
+	digit_rect->top_left = 0;
+	break;
+    case 7:
+	digit_rect->top_left = 0;
+	digit_rect->middle_left_corner = 0;
+	digit_rect->middle = 0;
+	digit_rect->bottom_left = 0;
+	digit_rect->bottom_left_corner = 0;
+	digit_rect->bottom = 0;
+    case 8:
+	break;
+    case 9:
+	digit_rect->bottom_left = 0;
+	break;
+    default:
+	break;
+    }
+}
+
+digit_rect_t load_digit_rect()
+{
+    digit_rect_t digit_rect = {
+	.top = 1,
+	.top_left_corner = 1,
+	.top_right_corner = 1,
+	.top_left = 1,
+	.top_right = 1,
+
+	.middle = 1,
+	.middle_left_corner = 1,
+	.middle_right_corner = 1,
+
+	.bottom = 1,
+	.bottom_left_corner = 1,
+	.bottom_right_corner = 1,        
+	.bottom_left = 1,
+	.bottom_right = 1
+    };
+
+    return digit_rect;
+}
+

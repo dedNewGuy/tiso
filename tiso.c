@@ -65,8 +65,8 @@ int main(int argc, char **argv)
 
     char frame_buffer[64];
 
-    digit_rect_t digit_rect = {0};
-
+    digit_rect_t digit_rect = load_digit_rect();
+    
     while (keepRunning) {
 	printf(CURSOR_HIDE);
 	printf(SCREEN_PUSH);
@@ -82,25 +82,33 @@ int main(int argc, char **argv)
 	/* render_timer(frame_buffer, hour, minute, second); */
 
 	/* --  Trying to render 88:88:88  -- */
-	digit_rect.top_right = 1;
-	digit_rect.top_right_corner = 1;
-	digit_rect.middle_right_corner = 1;
-	digit_rect.bottom_right = 1;
-	digit_rect.bottom_right_corner = 1;
+	digit_rect_set_num(&digit_rect, 2);
 	canvas_render_digit(canvas, 0, digit_rect);
-	/* canvas_render_digit(canvas, 4); */
-
-	/* canvas_render_cell(canvas, 8, canvas.segment_y / 2 - 1); */
-	/* canvas_render_cell(canvas, 8, canvas.segment_y / 2 + 1); */
+	canvas_render_digit(canvas, 4, digit_rect);
+	digit_rect = load_digit_rect();
 	
-	/* canvas_render_digit(canvas, 10); */
-	/* canvas_render_digit(canvas, 14); */
 
-	/* canvas_render_cell(canvas, 18, canvas.segment_y / 2 - 1); */
-	/* canvas_render_cell(canvas, 18, canvas.segment_y / 2 + 1); */
+	canvas_render_cell(canvas, 8, canvas.segment_y / 2 - 1);
+	canvas_render_cell(canvas, 8, canvas.segment_y / 2 + 1);
 
-	/* canvas_render_digit(canvas, 20); */
-	/* canvas_render_digit(canvas, 24); */
+	digit_rect_set_num(&digit_rect, 1);
+	canvas_render_digit(canvas, 10, digit_rect);
+	digit_rect = load_digit_rect();
+	
+	digit_rect_set_num(&digit_rect, 4);	
+	canvas_render_digit(canvas, 14, digit_rect);
+	digit_rect = load_digit_rect();
+
+	canvas_render_cell(canvas, 18, canvas.segment_y / 2 - 1);
+	canvas_render_cell(canvas, 18, canvas.segment_y / 2 + 1);
+
+	digit_rect_set_num(&digit_rect, 5);
+	canvas_render_digit(canvas, 20, digit_rect);
+	digit_rect = load_digit_rect();
+
+	digit_rect_set_num(&digit_rect, 9);	
+	canvas_render_digit(canvas, 24, digit_rect);
+	digit_rect = load_digit_rect();	
 	
 	term_sleep(sleep_time); // Sleep for sleep_time second
 	/* timer_descend(&hour, &minute, &second); */

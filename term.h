@@ -70,6 +70,9 @@ typedef struct {
     int bottom_right;
 } digit_rect_t;
 
+digit_rect_t load_digit_rect(); // load identity
+void digit_rect_set_num(digit_rect_t *digit_rect, int number);
+
 canvas_t init_canvas(viewport_t viewport, int segment_x, int segment_y);
 canvas_t canvas_resize(viewport_t *viewport);
 void canvas_render_box(canvas_t canvas, int x, int y);
