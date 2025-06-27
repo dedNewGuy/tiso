@@ -41,9 +41,10 @@ int reset_tty_mode(void)
     return 0;
 }
 
+static struct winsize win;
+
 viewport_t init_viewport()
 {
-    struct winsize win;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
     return (viewport_t){
 	.x = 0,
@@ -53,13 +54,48 @@ viewport_t init_viewport()
     };
 }
 
-canvas_t init_canvas(int x, int y, int width, int height)
+#define OFFSET_X  10
+#define OFFSET_Y  5
+
+void canvas_resize(viewport_t *viewport, canvas_t *canvas)
 {
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+    viewport->height = win.ws_row;
+    viewport->width = win.ws_col;
+    int x = viewport->x + OFFSET_X;
+    int y = viewport->y + OFFSET_Y;
+    int segment_x = viewport->width / 5;
+    int segment_y = viewport->height / 3;
+    int width = canvas->segment_x * canvas->cell.width - OFFSET_X;
+    int height = canvas->segment_y * canvas->cell.height - OFFSET_Y;
+    canvas->x = x;
+    canvas->y = y;
+    canvas->width = width;
+    canvas->height = height;
+    canvas->segment_x = segment_x;
+    canvas->segment_y = segment_y;    
+}
+
+canvas_t init_canvas(viewport_t viewport, int segment_x, int segment_y)
+{
+    int x = viewport.x + OFFSET_X;
+    int y = viewport.y + OFFSET_Y;
+    int cell_width = 4;
+    int cell_height = 2;
+    int width = segment_x * cell_width - OFFSET_X;
+    int height = segment_y * cell_height - OFFSET_Y;
     canvas_t canvas = {
 	.x = x,
 	.y = y,
 	.width = width,
-	.height = height
+	.height = height,
+	.segment_x = segment_x,
+	.segment_y = segment_y,
+	.cell = (cell_t){
+	    .height = cell_height,
+	    .width = cell_width,
+	}
+
     };
 
     return canvas;
@@ -73,8 +109,21 @@ void canvas_render_box(canvas_t canvas, int x, int y)
     printf(PIXEL);
 }
 
+rect_t init_rect(int x, int y, int width, int height, int is_visible)
+{
+    rect_t rect = {
+	.x = x,
+	.y = y,
+	.width = width,
+	.height = height,
+	.is_visible = is_visible
+    };
+    return rect;
+}
+
 void canvas_render_rect(canvas_t canvas, rect_t rect)
 {
+    if (rect.is_visible == 0) return;
     for (int row = 0; row < rect.height; ++row) {
 	int y = row + rect.y;
 	for (int col = 0; col < rect.width; ++col) {
@@ -82,4 +131,15 @@ void canvas_render_rect(canvas_t canvas, rect_t rect)
 	    canvas_render_box(canvas, x, y);
 	}
     }
+}
+
+void canvas_render_cell(canvas_t canvas, int index_x, int index_y)
+{
+    int canvas_x_start = index_x * canvas.cell.width;
+    int canvas_y_start = index_y * canvas.cell.height;
+
+    rect_t rect = init_rect(canvas_x_start, canvas_y_start, canvas.cell.width,
+			    canvas.cell.height, 1);
+
+    canvas_render_rect(canvas, rect);
 }

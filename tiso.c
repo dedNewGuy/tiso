@@ -18,18 +18,12 @@ void timer_descend(int *hour, int *minute, int *second);
 void render_timer(char frame_buffer[], int hour, int minute, int second);
 int is_time_correct_format(char *val);
 
-#define CANVAS_OFFSET_X 10
-#define CANVAS_OFFSET_Y 5
-
-
-
 int main(int argc, char **argv)
 {
     viewport_t viewport = init_viewport();
-    canvas_t canvas = init_canvas(viewport.x + CANVAS_OFFSET_X,
-				  viewport.y + CANVAS_OFFSET_Y,
-				  viewport.width - CANVAS_OFFSET_X,
-				  viewport.height - CANVAS_OFFSET_Y);
+    int segment_x = viewport.width / 5;
+    int segment_y = viewport.height / 3;
+    canvas_t canvas = init_canvas(viewport, segment_x, segment_y);
     
     int hour = 0;
     int minute = 0;
@@ -74,13 +68,6 @@ int main(int argc, char **argv)
 
     char frame_buffer[64];
 
-    rect_t rect1 = {
-	.x = 0,
-	.y = 0,
-	.width = 5,
-	.height = 5
-    };
-
     while (keepRunning) {
 	printf(CURSOR_HIDE);
 	printf(SCREEN_PUSH);
@@ -90,14 +77,16 @@ int main(int argc, char **argv)
 
 	/* render_timer(frame_buffer, hour, minute, second); */
 
-	canvas_render_rect(canvas, rect1);
-	rect1.x += 1;
+	canvas_render_cell(canvas, 0, 0);
+	canvas_render_cell(canvas, canvas.segment_x, 0);
+	canvas_render_cell(canvas, 0, canvas.segment_y);
+	canvas_render_cell(canvas, canvas.segment_x, canvas.segment_y);
 	
 	term_sleep(sleep_time); // Sleep for sleep_time second
-
 	/* timer_descend(&hour, &minute, &second); */
-    }
 
+	canvas_resize(&viewport, &canvas);
+    }
     
     return 0;
 }
