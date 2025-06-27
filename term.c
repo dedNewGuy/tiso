@@ -236,7 +236,7 @@ void digit_rect_set_num(digit_rect_t *digit_rect, int number)
 	digit_rect->bottom_left = 0;
 	break;
     case 6:
-	digit_rect->top_left = 0;
+	digit_rect->top_right = 0;
 	break;
     case 7:
 	digit_rect->top_left = 0;

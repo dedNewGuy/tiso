@@ -11,12 +11,25 @@
     fprintf(stderr, __VA_ARGS__);		\
     fprintf(stderr, "\n");
 
+
+typedef struct {
+    int hour_one;
+    int hour_ten;
+    
+    int minute_one;
+    int minute_ten;
+    
+    int second_one;
+    int second_ten;
+} timef_val_t;
+
 void *input_handling(void *arg);
 void restore_term_state(void);
 
 void timer_descend(int *hour, int *minute, int *second);
+void update_time(timef_val_t *time_f, int hour, int minute, int second);
 void render_timer(char frame_buffer[], int hour, int minute, int second);
-int is_time_correct_format(char *val);
+int is_time_in_digit(char *val);
 
 int main(int argc, char **argv)
 {
@@ -27,6 +40,8 @@ int main(int argc, char **argv)
     int minute = 0;
     int second = 0;
 
+    timef_val_t time_f = {0};
+    
     if (argc == 3) {
 	char *opt = argv[1];
 	if (strcmp(opt, "-t") != 0) {
@@ -38,10 +53,10 @@ int main(int argc, char **argv)
 	// Causing Seg fault if given otherwise. Need proper error handling
 	char *hour_str   = strtok(timer_val, ":");
 	char *minute_str = strtok(NULL, ":");
-	char *second_str = strtok(NULL, ":");
+	char *second_str = strtok(NULL, ":"); // [0,0]
 	
-	if (is_time_correct_format(hour_str) && is_time_correct_format(minute_str)
-	    && is_time_correct_format(second_str)) {
+	if (is_time_in_digit(hour_str) && is_time_in_digit(minute_str)
+	    && is_time_in_digit(second_str)) {
 	    hour = atoi(hour_str);
 	    minute = atoi(minute_str);
 	    second = atoi(second_str);
@@ -49,6 +64,11 @@ int main(int argc, char **argv)
 	    log_errorf("Only digit is allowed");
 	    exit(1);
 	}
+
+	// TODO: Maybe handle if minute and second past 60? but it's a cool feature
+	// what if someone just want to set 90 second and don't want to think about
+	// Turning it to minute and second... Think about it
+
     } else {
 	log_errorf("No Option supplied");
 	exit(1);
@@ -63,8 +83,6 @@ int main(int argc, char **argv)
 
     pthread_create(&input_thread, NULL, input_handling, &keepRunning);
 
-    char frame_buffer[64];
-
     digit_rect_t digit_rect = load_digit_rect();
     
     while (keepRunning) {
@@ -74,44 +92,43 @@ int main(int argc, char **argv)
 	printf(SCREEN_CLEAR);
 	printf(CURSOR_HOME);
 
-	/*
-	  TODO: Add support to render other digit easily so
-	   we can adjust the digit based on current time.
-	 */
-
-	/* render_timer(frame_buffer, hour, minute, second); */
+	update_time(&time_f, hour, minute, second);
 
 	/* --  Trying to render 88:88:88  -- */
-	digit_rect_set_num(&digit_rect, 2);
+	digit_rect_set_num(&digit_rect, time_f.hour_ten);
 	canvas_render_digit(canvas, 0, digit_rect);
-	canvas_render_digit(canvas, 4, digit_rect);
 	digit_rect = load_digit_rect();
 	
+	digit_rect_set_num(&digit_rect, time_f.hour_one);
+	canvas_render_digit(canvas, 4, digit_rect);
+	digit_rect = load_digit_rect();
 
 	canvas_render_cell(canvas, 8, canvas.segment_y / 2 - 1);
 	canvas_render_cell(canvas, 8, canvas.segment_y / 2 + 1);
 
-	digit_rect_set_num(&digit_rect, 1);
+	digit_rect_set_num(&digit_rect, time_f.minute_ten);
 	canvas_render_digit(canvas, 10, digit_rect);
 	digit_rect = load_digit_rect();
 	
-	digit_rect_set_num(&digit_rect, 4);	
+	digit_rect_set_num(&digit_rect, time_f.minute_one);	
 	canvas_render_digit(canvas, 14, digit_rect);
 	digit_rect = load_digit_rect();
 
 	canvas_render_cell(canvas, 18, canvas.segment_y / 2 - 1);
 	canvas_render_cell(canvas, 18, canvas.segment_y / 2 + 1);
 
-	digit_rect_set_num(&digit_rect, 5);
+	digit_rect_set_num(&digit_rect, time_f.second_ten);
 	canvas_render_digit(canvas, 20, digit_rect);
 	digit_rect = load_digit_rect();
 
-	digit_rect_set_num(&digit_rect, 9);	
+	digit_rect_set_num(&digit_rect, time_f.second_one);	
 	canvas_render_digit(canvas, 24, digit_rect);
 	digit_rect = load_digit_rect();	
-	
+
+	// TODO: Improve loop
 	term_sleep(sleep_time); // Sleep for sleep_time second
-	/* timer_descend(&hour, &minute, &second); */
+	
+	timer_descend(&hour, &minute, &second);
 
 	canvas = canvas_resize(&viewport);
     }
@@ -171,7 +188,7 @@ void render_timer(char frame_buffer[], int hour, int minute, int second)
     printf("%s\n", frame_buffer);
 }
 
-int is_time_correct_format(char *val)
+int is_time_in_digit(char *val)
 {
     int len = strlen(val);
     int valid;
@@ -183,4 +200,14 @@ int is_time_correct_format(char *val)
 	}
     }
     return valid;
+}
+
+void update_time(timef_val_t *time_f, int hour, int minute, int second)
+{
+    time_f->hour_one = hour % 10; 
+    time_f->hour_ten = hour * 0.1f;
+    time_f->minute_one = minute % 10; 
+    time_f->minute_ten = minute * 0.1f;
+    time_f->second_one = second % 10; 
+    time_f->second_ten = second * 0.1f;
 }
