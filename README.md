@@ -3,7 +3,6 @@
 > [!WARNING]
 > Under Construction.. All the ugliness is necessary for me to play around with my ideas
 
-
 ## Basic idea
 
 ```
