@@ -63,7 +63,7 @@ typedef struct {
 } digit_rect_t;
 
 canvas_t init_canvas(viewport_t viewport, int segment_x, int segment_y);
-void canvas_resize(viewport_t *viewport, canvas_t *canvas);
+canvas_t canvas_resize(viewport_t *viewport);
 void canvas_render_box(canvas_t canvas, int x, int y);
 void canvas_render_rect(canvas_t canvas, rect_t rect);
 void canvas_render_digit(canvas_t canvas, int offset);

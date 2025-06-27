@@ -54,36 +54,26 @@ viewport_t init_viewport()
     };
 }
 
-#define OFFSET_X  1
-#define OFFSET_Y  1
-
-void canvas_resize(viewport_t *viewport, canvas_t *canvas)
+canvas_t canvas_resize(viewport_t *viewport)
 {
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
-    viewport->height = win.ws_row;
     viewport->width = win.ws_col;
-    int x = viewport->x + OFFSET_X;
-    int y = viewport->y + OFFSET_Y;
-    int width = canvas->segment_x * canvas->cell.width - OFFSET_X;
-    int height = canvas->segment_y * canvas->cell.height - OFFSET_Y;
-    int cell_width = 2;
-    int cell_height = 1;
-    canvas->x = x;
-    canvas->y = y;
-    canvas->width = width;
-    canvas->height = height;
-    canvas->cell.width = cell_width;
-    canvas->cell.height = cell_height;
+    viewport->height = win.ws_row;
+    
+    canvas_t canvas = init_canvas(*viewport, 27, 7);
+    return canvas;
 }
 
 canvas_t init_canvas(viewport_t viewport, int segment_x, int segment_y)
 {
-    int x = viewport.x + OFFSET_X;
-    int y = viewport.y + OFFSET_Y;
+    // TODO: Proper handling for resizing. Proper x and y I meant.
+    // TODO: How to decide a good cell width and height base on canvas size.
+    int x = (0.5 * viewport.width) - (segment_x + 1);
+    int y = 0.25 * viewport.height;
     int cell_width = 2;
     int cell_height = 1;
-    int width = segment_x * cell_width - OFFSET_X;
-    int height = segment_y * cell_height - OFFSET_Y;
+    int width = segment_x * cell_width;
+    int height = segment_y * cell_height;
     canvas_t canvas = {
 	.x = x,
 	.y = y,

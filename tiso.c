@@ -72,9 +72,10 @@ int main(int argc, char **argv)
 	printf(SCREEN_CLEAR);
 	printf(CURSOR_HOME);
 
-	/* TODO: Leave a TODO :D */
-	/* TODO: Fix Rescaling issue and drawing rectangle properly based on terminal
-	 size */
+	/*
+	  TODO: Add support to render other digit easily so
+	   we can adjust the digit based on current time.
+	 */
 
 	/* render_timer(frame_buffer, hour, minute, second); */
 
@@ -93,17 +94,11 @@ int main(int argc, char **argv)
 
 	canvas_render_digit(canvas, 20);
 	canvas_render_digit(canvas, 24);
-
-
-	/* canvas_render_cell(canvas, 0, 0); */
-	/* canvas_render_cell(canvas, canvas.segment_x, 0); */
-	/* canvas_render_cell(canvas, 0, canvas.segment_y); */
-	/* canvas_render_cell(canvas, canvas.segment_x, canvas.segment_y); */
 	
 	term_sleep(sleep_time); // Sleep for sleep_time second
 	/* timer_descend(&hour, &minute, &second); */
 
-	canvas_resize(&viewport, &canvas);
+	canvas = canvas_resize(&viewport);
     }
     
     return 0;
