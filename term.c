@@ -54,8 +54,8 @@ viewport_t init_viewport()
     };
 }
 
-#define OFFSET_X  10
-#define OFFSET_Y  5
+#define OFFSET_X  1
+#define OFFSET_Y  1
 
 void canvas_resize(viewport_t *viewport, canvas_t *canvas)
 {
@@ -64,24 +64,24 @@ void canvas_resize(viewport_t *viewport, canvas_t *canvas)
     viewport->width = win.ws_col;
     int x = viewport->x + OFFSET_X;
     int y = viewport->y + OFFSET_Y;
-    int segment_x = viewport->width / 5;
-    int segment_y = viewport->height / 3;
     int width = canvas->segment_x * canvas->cell.width - OFFSET_X;
     int height = canvas->segment_y * canvas->cell.height - OFFSET_Y;
+    int cell_width = 2;
+    int cell_height = 1;
     canvas->x = x;
     canvas->y = y;
     canvas->width = width;
     canvas->height = height;
-    canvas->segment_x = segment_x;
-    canvas->segment_y = segment_y;    
+    canvas->cell.width = cell_width;
+    canvas->cell.height = cell_height;
 }
 
 canvas_t init_canvas(viewport_t viewport, int segment_x, int segment_y)
 {
     int x = viewport.x + OFFSET_X;
     int y = viewport.y + OFFSET_Y;
-    int cell_width = 4;
-    int cell_height = 2;
+    int cell_width = 2;
+    int cell_height = 1;
     int width = segment_x * cell_width - OFFSET_X;
     int height = segment_y * cell_height - OFFSET_Y;
     canvas_t canvas = {
@@ -142,4 +142,38 @@ void canvas_render_cell(canvas_t canvas, int index_x, int index_y)
 			    canvas.cell.height, 1);
 
     canvas_render_rect(canvas, rect);
+}
+
+void canvas_render_digit(canvas_t canvas, int offset)
+{
+    	// TOP
+	canvas_render_cell(canvas, 0 + offset, 0);
+	canvas_render_cell(canvas, 1 + offset, 0);
+	canvas_render_cell(canvas, 2 + offset, 0);
+
+	// TOP LEFT
+	canvas_render_cell(canvas, 0 + offset, 1);
+	canvas_render_cell(canvas, 0 + offset, 2);
+
+	// TOP RIGHT
+	canvas_render_cell(canvas, 2 + offset, 1);
+	canvas_render_cell(canvas, 2 + offset, 2);
+
+	// MIDDLE
+	canvas_render_cell(canvas, 0 + offset, 3);
+	canvas_render_cell(canvas, 1 + offset, 3);
+	canvas_render_cell(canvas, 2 + offset, 3);
+
+	// BOTTOM LEFT
+	canvas_render_cell(canvas, 0 + offset, 4);
+	canvas_render_cell(canvas, 0 + offset, 5);
+
+	// BOTTOM RIGHT
+	canvas_render_cell(canvas, 2 + offset, 4);
+	canvas_render_cell(canvas, 2 + offset, 5);
+
+	// BOTTOM
+	canvas_render_cell(canvas, 0 + offset, 6);
+	canvas_render_cell(canvas, 1 + offset, 6);
+	canvas_render_cell(canvas, 2 + offset, 6);
 }

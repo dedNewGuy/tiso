@@ -21,9 +21,7 @@ int is_time_correct_format(char *val);
 int main(int argc, char **argv)
 {
     viewport_t viewport = init_viewport();
-    int segment_x = viewport.width / 5;
-    int segment_y = viewport.height / 3;
-    canvas_t canvas = init_canvas(viewport, segment_x, segment_y);
+    canvas_t canvas = init_canvas(viewport, 27, 7);
     
     int hour = 0;
     int minute = 0;
@@ -65,7 +63,6 @@ int main(int argc, char **argv)
 
     pthread_create(&input_thread, NULL, input_handling, &keepRunning);
 
-
     char frame_buffer[64];
 
     while (keepRunning) {
@@ -75,12 +72,33 @@ int main(int argc, char **argv)
 	printf(SCREEN_CLEAR);
 	printf(CURSOR_HOME);
 
+	/* TODO: Leave a TODO :D */
+	/* TODO: Fix Rescaling issue and drawing rectangle properly based on terminal
+	 size */
+
 	/* render_timer(frame_buffer, hour, minute, second); */
 
-	canvas_render_cell(canvas, 0, 0);
-	canvas_render_cell(canvas, canvas.segment_x, 0);
-	canvas_render_cell(canvas, 0, canvas.segment_y);
-	canvas_render_cell(canvas, canvas.segment_x, canvas.segment_y);
+	/* --  Trying to render 8  -- */
+	canvas_render_digit(canvas, 0);
+	canvas_render_digit(canvas, 4);
+
+	canvas_render_cell(canvas, 8, canvas.segment_y / 2 - 1);
+	canvas_render_cell(canvas, 8, canvas.segment_y / 2 + 1);
+	
+	canvas_render_digit(canvas, 10);
+	canvas_render_digit(canvas, 14);
+
+	canvas_render_cell(canvas, 18, canvas.segment_y / 2 - 1);
+	canvas_render_cell(canvas, 18, canvas.segment_y / 2 + 1);
+
+	canvas_render_digit(canvas, 20);
+	canvas_render_digit(canvas, 24);
+
+
+	/* canvas_render_cell(canvas, 0, 0); */
+	/* canvas_render_cell(canvas, canvas.segment_x, 0); */
+	/* canvas_render_cell(canvas, 0, canvas.segment_y); */
+	/* canvas_render_cell(canvas, canvas.segment_x, canvas.segment_y); */
 	
 	term_sleep(sleep_time); // Sleep for sleep_time second
 	/* timer_descend(&hour, &minute, &second); */
