@@ -9,6 +9,10 @@ Requirements
 ./build.sh
 ```
 
+## Screenshot
+
+![image](https://github.com/user-attachments/assets/0b350fa4-43ff-4040-9e0e-4e2ea4e7d2ae)
+
 ## Usage
 
 ```
