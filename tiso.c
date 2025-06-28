@@ -8,12 +8,15 @@
 
 #include "term.h"
 
+// Feel like it is useless
 #define log_errorf(...)				\
     fprintf(stderr, "[ERROR] ");		\
     fprintf(stderr, __VA_ARGS__);		\
     fprintf(stderr, "\n");
 
 
+// TODO: Modularize code so it's not messy
+// But then again, at this point I don't care.
 typedef struct {
     int hour_one;
     int hour_ten;
@@ -48,6 +51,9 @@ int main(int argc, char **argv)
     timef_val_t time_f = {0};
 
     // If option -t is supplied
+    // TODO: Abstract this so it's easier to expand
+    // But then again, I'm only planning to finish this project
+    // as is
     if (argc == 3) {
 	char *opt = argv[1];
 	if (strcmp(opt, "-t") != 0) {
@@ -55,11 +61,9 @@ int main(int argc, char **argv)
 	    exit(1);
 	}
 	char *timer_val = argv[2];
-	// TODO: Handle different format. Currently it hardcoded into strictly HH:MM:SS.
-	// Causing Seg fault if given otherwise. Need proper error handling
 	char *hour_str   = strtok(timer_val, ":");
 	char *minute_str = strtok(NULL, ":");
-	char *second_str = strtok(NULL, ":"); // [0,0]
+	char *second_str = strtok(NULL, ":");
 	
 	if (is_time_in_digit(hour_str) && is_time_in_digit(minute_str)
 	    && is_time_in_digit(second_str)) {
@@ -70,12 +74,6 @@ int main(int argc, char **argv)
 	    log_errorf("Only digit is allowed");
 	    exit(1);
 	}
-
-	// TODO: Maybe handle if minute and second past 60? but it's a cool feature
-	// what if someone just want to set 90 second and don't want to think about
-	// Turning it to minute and second... Think about it
-
-	// If no option supplied
     } else {
 	char *pray_time[5];
 	char *home_dir = getenv("HOME");
@@ -105,7 +103,6 @@ int main(int argc, char **argv)
 
 	update_time(&time_f, hour, minute, second);
 
-	/* --  Trying to render 88:88:88  -- */
 	digit_rect_set_num(&digit_rect, time_f.hour_ten);
 	canvas_render_digit(canvas, 0, digit_rect);
 	digit_rect = load_digit_rect();
@@ -136,8 +133,8 @@ int main(int argc, char **argv)
 	canvas_render_digit(canvas, 24, digit_rect);
 	digit_rect = load_digit_rect();	
 
-	// TODO: Improve loop
-	term_sleep(sleep_time); // Sleep for sleep_time second
+
+	term_sleep(sleep_time);
 	
 	timer_descend(&hour, &minute, &second);
 
