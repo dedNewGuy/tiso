@@ -1,5 +1,14 @@
 # tiso - terminal prayer time for muslim
 
+## Build
+
+Requirements
+- clang or others if you know how to modify the build.sh (you probably do)
+
+```bash
+./build.sh
+```
+
 ## Usage
 
 ```
@@ -15,7 +24,8 @@ asr=17:40
 maghrib=19:23
 isha=20:48
 
-tiso Display time left before the next prayer time 
+running *tiso* without any option will display time left before the next prayer
+time 
 
 OPTIONS:
 -t <h:m:s>  Set timer to <h:m:s> and in descending
