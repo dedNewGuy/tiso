@@ -2,7 +2,8 @@
 
 ## Screenshot
 
-![image](https://github.com/user-attachments/assets/67066d4d-cc34-4ba5-a897-f111b4b0c0a8)
+![image](https://github.com/user-attachments/assets/0b350fa4-43ff-4040-9e0e-4e2ea4e7d2ae)
+
 
 ## Usage
 
