@@ -1,5 +1,9 @@
 # tiso - terminal prayer time for muslim
 
+## Screenshot
+
+![image](https://github.com/user-attachments/assets/67066d4d-cc34-4ba5-a897-f111b4b0c0a8)
+
 ## Usage
 
 ```
