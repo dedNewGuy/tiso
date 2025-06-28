@@ -11,7 +11,8 @@ Requirements
 
 ## Screenshot
 
-![image](https://github.com/user-attachments/assets/0b350fa4-43ff-4040-9e0e-4e2ea4e7d2ae)
+![image](https://github.com/user-attachments/assets/8b4c4b0e-4693-4f3d-bb2e-b452161f6f06)
+
 
 ## Usage
 
