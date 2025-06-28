@@ -278,18 +278,27 @@ void parse_pray_time(char *pray_time[5], int *hour, int *minute)
     timeinfo = localtime(&rawtime);
     int curr_hour = timeinfo->tm_hour;
     int curr_minute = timeinfo->tm_min;
+
+    // Check and compare with isha (because it has special case)
+    char *isha_prayt = pray_time[4];
+    
+    int ipray_h = atoi(strtok(isha_prayt, ":"));
+    int ipray_m = atoi(strtok(NULL, ":"));
+    int cmp_curr_isha = compare_hm(curr_hour, curr_minute, ipray_h, ipray_m);
     
     /*
-      If current_time > pray_time[(i + 1) % 5] get the time difference
+      If current_time < pray_time[(i + 1) % 5] get the time difference
       between current_time and pray_time[i]
      */
     for (int i = 0; i < 5; ++i) {
-	char *next_prayt = pray_time[(i + 1) % 5];
+	int index = (i + 1) % 5;
+	char *next_prayt = pray_time[index];
 	int npray_h = atoi(strtok(next_prayt, ":"));
 	int npray_m = atoi(strtok(NULL, ":"));
 
 	int is_currt_larger = compare_hm(curr_hour, curr_minute, npray_h, npray_m);
-	if (is_currt_larger > 0) {
+
+	if (is_currt_larger < 0 || cmp_curr_isha > 0) {
 	    char *prayt = pray_time[i];
 	    int pray_h = atoi(strtok(prayt, ":"));
 	    int pray_m = atoi(strtok(NULL, ":"));
