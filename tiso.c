@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <pthread.h>
+#include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 #include "term.h"
 
@@ -31,6 +33,9 @@ void update_time(timef_val_t *time_f, int hour, int minute, int second);
 void render_timer(char frame_buffer[], int hour, int minute, int second);
 int is_time_in_digit(char *val);
 
+void parse_config_file(char *buf[5], char *filename);
+void parse_pray_time(char *pray_time[5], int *hour, int *minute);
+
 int main(int argc, char **argv)
 {
     viewport_t viewport = init_viewport();
@@ -41,7 +46,8 @@ int main(int argc, char **argv)
     int second = 0;
 
     timef_val_t time_f = {0};
-    
+
+    // If option -t is supplied
     if (argc == 3) {
 	char *opt = argv[1];
 	if (strcmp(opt, "-t") != 0) {
@@ -69,9 +75,14 @@ int main(int argc, char **argv)
 	// what if someone just want to set 90 second and don't want to think about
 	// Turning it to minute and second... Think about it
 
+	// If no option supplied
     } else {
-	log_errorf("No Option supplied");
-	exit(1);
+	char *pray_time[5];
+	char *home_dir = getenv("HOME");
+	char config_filepath[126];
+	sprintf(config_filepath, "%s/.config/tiso/config.txt", home_dir);
+	parse_config_file(pray_time, config_filepath);
+	parse_pray_time(pray_time, &hour, &minute);
     }
     
     pthread_t input_thread;
@@ -210,4 +221,94 @@ void update_time(timef_val_t *time_f, int hour, int minute, int second)
     time_f->minute_ten = minute * 0.1f;
     time_f->second_one = second % 10; 
     time_f->second_ten = second * 0.1f;
+}
+
+void parse_config_file(char *buf[5], char *filename)
+{
+
+    FILE *config_file = fopen(filename, "r");
+    if (config_file == NULL) {
+	perror("tiso");
+	exit(1);
+    }
+    
+    char s[256];
+    int i = 0;
+    int pray_time_text_size = 6;
+    while ((fgets(s, 256, config_file)) != NULL) {
+        strtok(s, "=");
+	char *prayer_time = strtok(NULL, "=");
+	buf[i] = malloc(pray_time_text_size * sizeof(char));
+	if (buf[i] == NULL) {
+	    perror("tiso");
+	    exit(1);
+	}
+	strcpy(buf[i], prayer_time);
+	++i;
+    }
+}
+
+/*
+  Compare hour and minute for prayer time.
+  Return 0 if equal
+  Return 1 if time1 > time2
+  Return -1 if time1 < time2
+ */
+int compare_hm(int h1, int m1, int h2, int m2)
+{
+    if (h1 > h2) {
+	return 1;
+    } else if (h1 < h2) {
+	return -1;
+    } else {
+	if (m1 > m2) {
+	    return 1;
+	} else if (m1 < m2) {
+	    return -1;
+	} else {
+	    return 0;
+	}
+    }
+}
+
+void parse_pray_time(char *pray_time[5], int *hour, int *minute)
+{
+    /* Get current time */
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    int curr_hour = timeinfo->tm_hour;
+    int curr_minute = timeinfo->tm_min;
+    
+    /*
+      If current_time > pray_time[(i + 1) % 5] get the time difference
+      between current_time and pray_time[i]
+     */
+    for (int i = 0; i < 5; ++i) {
+	char *next_prayt = pray_time[(i + 1) % 5];
+	int npray_h = atoi(strtok(next_prayt, ":"));
+	int npray_m = atoi(strtok(NULL, ":"));
+
+	int is_currt_larger = compare_hm(curr_hour, curr_minute, npray_h, npray_m);
+	if (is_currt_larger > 0) {
+	    char *prayt = pray_time[i];
+	    int pray_h = atoi(strtok(prayt, ":"));
+	    int pray_m = atoi(strtok(NULL, ":"));
+	    
+	    int delta_h = pray_h - curr_hour;
+	    int delta_m = pray_m - curr_minute;
+	    if (delta_m < 0) {
+		delta_m += 60;
+		delta_h -= 1;
+	    }
+	    if (delta_h < 0) {
+		delta_h += 24;
+	    }
+	    *hour = delta_h;
+	    *minute = delta_m;
+	    break;
+	}
+    }
 }
