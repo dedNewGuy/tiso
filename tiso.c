@@ -37,7 +37,7 @@ void render_timer(char frame_buffer[], int hour, int minute, int second);
 int is_time_in_digit(char *val);
 
 void parse_config_file(char *buf[5], char *filename);
-void parse_pray_time(char *pray_time[5], int *hour, int *minute);
+void parse_pray_time(char *pray_time[5], char *prayer_name, int *hour, int *minute);
 
 int main(int argc, char **argv)
 {
@@ -47,6 +47,9 @@ int main(int argc, char **argv)
     int hour = 0;
     int minute = 0;
     int second = 0;
+
+    int prayer_flag = 0;
+    char prayer_name[10];
 
     timef_val_t time_f = {0};
 
@@ -75,12 +78,13 @@ int main(int argc, char **argv)
 	    exit(1);
 	}
     } else {
+	prayer_flag = 1;
 	char *pray_time[5];
 	char *home_dir = getenv("HOME");
 	char config_filepath[126];
 	sprintf(config_filepath, "%s/.config/tiso/config.txt", home_dir);
 	parse_config_file(pray_time, config_filepath);
-	parse_pray_time(pray_time, &hour, &minute);
+	parse_pray_time(pray_time, prayer_name, &hour, &minute);
     }
     
     pthread_t input_thread;
@@ -133,6 +137,8 @@ int main(int argc, char **argv)
 	canvas_render_digit(canvas, 24, digit_rect);
 	digit_rect = load_digit_rect();	
 
+	if (prayer_flag)
+	    printf("NEXT PRAYER: %s\n", prayer_name);
 
 	term_sleep(sleep_time);
 	
@@ -268,7 +274,26 @@ int compare_hm(int h1, int m1, int h2, int m2)
     }
 }
 
-void parse_pray_time(char *pray_time[5], int *hour, int *minute)
+char *get_prayer_name(int i)
+{
+    switch (i) {
+    case 0:
+	return "Fajr";
+    case 1:
+	return "Zuhur";
+    case 2:
+	return "Asr";
+    case 3:
+	return "Maghrib";
+    case 4:
+	return "Isha";
+    default:
+	log_errorf("NO SUCH PRAYER EXIST");
+	exit(1);
+    }
+}
+
+void parse_pray_time(char *pray_time[5], char *next_pray, int *hour, int *minute)
 {
     /* Get current time */
     time_t rawtime;
@@ -298,7 +323,7 @@ void parse_pray_time(char *pray_time[5], int *hour, int *minute)
 	int is_currt_larger = compare_hm(curr_hour, curr_minute, pray_h, pray_m);
 
 	if (is_currt_larger < 0 || cmp_curr_isha > 0) {
-	    
+	    strcpy(next_pray, get_prayer_name(i));
 	    int delta_h = pray_h - curr_hour;
 	    int delta_m = pray_m - curr_minute;
 	    if (delta_m < 0) {
