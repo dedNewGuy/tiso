@@ -322,7 +322,7 @@ void parse_pray_time(char *pray_time[5], char *next_pray, int *hour, int *minute
 	
 	int is_currt_larger = compare_hm(curr_hour, curr_minute, pray_h, pray_m);
 
-	if (is_currt_larger <= 0 || cmp_curr_isha > 0) {
+	if (is_currt_larger < 0 || cmp_curr_isha > 0) {
 	    strcpy(next_pray, get_prayer_name(i));
 	    int delta_h = pray_h - curr_hour;
 	    int delta_m = pray_m - curr_minute;
