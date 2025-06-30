@@ -91,12 +91,16 @@ canvas_t init_canvas(viewport_t viewport, int segment_x, int segment_y)
     return canvas;
 }
 
+#define COLOR_CYAN "\033[38;5;87m"  
 #define PIXEL "\u2588\n"
+#define RESET "\033[0m"
 
 void canvas_render_box(canvas_t canvas, int x, int y)
 {
     printf("\033[%d;%dH", canvas.y + y, canvas.x + x);
+	printf(COLOR_CYAN);
     printf(PIXEL);
+	printf(RESET);
 }
 
 rect_t init_rect(int x, int y, int width, int height, int is_visible)

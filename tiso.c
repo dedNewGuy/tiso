@@ -9,9 +9,9 @@
 #include "term.h"
 
 // Feel like it is useless
-#define log_errorf(...)				\
-    fprintf(stderr, "[ERROR] ");		\
-    fprintf(stderr, __VA_ARGS__);		\
+#define log_errorf(...)							\
+    fprintf(stderr, "[ERROR] ");				\
+    fprintf(stderr, __VA_ARGS__);				\
     fprintf(stderr, "\n");
 
 
@@ -58,33 +58,33 @@ int main(int argc, char **argv)
     // But then again, I'm only planning to finish this project
     // as is
     if (argc == 3) {
-	char *opt = argv[1];
-	if (strcmp(opt, "-t") != 0) {
-	    log_errorf("Unknown option supplied %s", opt);
-	    exit(1);
-	}
-	char *timer_val = argv[2];
-	char *hour_str   = strtok(timer_val, ":");
-	char *minute_str = strtok(NULL, ":");
-	char *second_str = strtok(NULL, ":");
+		char *opt = argv[1];
+		if (strcmp(opt, "-t") != 0) {
+			log_errorf("Unknown option supplied %s", opt);
+			exit(1);
+		}
+		char *timer_val = argv[2];
+		char *hour_str   = strtok(timer_val, ":");
+		char *minute_str = strtok(NULL, ":");
+		char *second_str = strtok(NULL, ":");
 	
-	if (is_time_in_digit(hour_str) && is_time_in_digit(minute_str)
-	    && is_time_in_digit(second_str)) {
-	    hour = atoi(hour_str);
-	    minute = atoi(minute_str);
-	    second = atoi(second_str);
-	} else {
-	    log_errorf("Only digit is allowed");
-	    exit(1);
-	}
+		if (is_time_in_digit(hour_str) && is_time_in_digit(minute_str)
+			&& is_time_in_digit(second_str)) {
+			hour = atoi(hour_str);
+			minute = atoi(minute_str);
+			second = atoi(second_str);
+		} else {
+			log_errorf("Only digit is allowed");
+			exit(1);
+		}
     } else {
-	prayer_flag = 1;
-	char *pray_time[5];
-	char *home_dir = getenv("HOME");
-	char config_filepath[126];
-	sprintf(config_filepath, "%s/.config/tiso/config.txt", home_dir);
-	parse_config_file(pray_time, config_filepath);
-	parse_pray_time(pray_time, prayer_name, &hour, &minute);
+		prayer_flag = 1;
+		char *pray_time[5];
+		char *home_dir = getenv("HOME");
+		char config_filepath[126];
+		sprintf(config_filepath, "%s/.config/tiso/config.txt", home_dir);
+		parse_config_file(pray_time, config_filepath);
+		parse_pray_time(pray_time, prayer_name, &hour, &minute);
     }
     
     pthread_t input_thread;
@@ -99,52 +99,52 @@ int main(int argc, char **argv)
     digit_rect_t digit_rect = load_digit_rect();
     
     while (keepRunning) {
-	printf(CURSOR_HIDE);
-	printf(SCREEN_PUSH);
-	printf(CURSOR_HIDE);
-	printf(SCREEN_CLEAR);
-	printf(CURSOR_HOME);
+		printf(CURSOR_HIDE);
+		printf(SCREEN_PUSH);
+		printf(CURSOR_HIDE);
+		printf(SCREEN_CLEAR);
+		printf(CURSOR_HOME);
 
-	update_time(&time_f, hour, minute, second);
+		update_time(&time_f, hour, minute, second);
 
-	digit_rect_set_num(&digit_rect, time_f.hour_ten);
-	canvas_render_digit(canvas, 0, digit_rect);
-	digit_rect = load_digit_rect();
+		digit_rect_set_num(&digit_rect, time_f.hour_ten);
+		canvas_render_digit(canvas, 0, digit_rect);
+		digit_rect = load_digit_rect();
 	
-	digit_rect_set_num(&digit_rect, time_f.hour_one);
-	canvas_render_digit(canvas, 4, digit_rect);
-	digit_rect = load_digit_rect();
+		digit_rect_set_num(&digit_rect, time_f.hour_one);
+		canvas_render_digit(canvas, 4, digit_rect);
+		digit_rect = load_digit_rect();
 
-	canvas_render_cell(canvas, 8, canvas.segment_y / 2 - 1);
-	canvas_render_cell(canvas, 8, canvas.segment_y / 2 + 1);
+		canvas_render_cell(canvas, 8, canvas.segment_y / 2 - 1);
+		canvas_render_cell(canvas, 8, canvas.segment_y / 2 + 1);
 
-	digit_rect_set_num(&digit_rect, time_f.minute_ten);
-	canvas_render_digit(canvas, 10, digit_rect);
-	digit_rect = load_digit_rect();
+		digit_rect_set_num(&digit_rect, time_f.minute_ten);
+		canvas_render_digit(canvas, 10, digit_rect);
+		digit_rect = load_digit_rect();
 	
-	digit_rect_set_num(&digit_rect, time_f.minute_one);	
-	canvas_render_digit(canvas, 14, digit_rect);
-	digit_rect = load_digit_rect();
+		digit_rect_set_num(&digit_rect, time_f.minute_one);	
+		canvas_render_digit(canvas, 14, digit_rect);
+		digit_rect = load_digit_rect();
 
-	canvas_render_cell(canvas, 18, canvas.segment_y / 2 - 1);
-	canvas_render_cell(canvas, 18, canvas.segment_y / 2 + 1);
+		canvas_render_cell(canvas, 18, canvas.segment_y / 2 - 1);
+		canvas_render_cell(canvas, 18, canvas.segment_y / 2 + 1);
 
-	digit_rect_set_num(&digit_rect, time_f.second_ten);
-	canvas_render_digit(canvas, 20, digit_rect);
-	digit_rect = load_digit_rect();
+		digit_rect_set_num(&digit_rect, time_f.second_ten);
+		canvas_render_digit(canvas, 20, digit_rect);
+		digit_rect = load_digit_rect();
 
-	digit_rect_set_num(&digit_rect, time_f.second_one);	
-	canvas_render_digit(canvas, 24, digit_rect);
-	digit_rect = load_digit_rect();	
+		digit_rect_set_num(&digit_rect, time_f.second_one);	
+		canvas_render_digit(canvas, 24, digit_rect);
+		digit_rect = load_digit_rect();	
 
-	if (prayer_flag)
-	    printf("NEXT PRAYER: %s\n", prayer_name);
+		if (prayer_flag)
+			printf("NEXT PRAYER: %s\n", prayer_name);
 
-	term_sleep(sleep_time);
+		term_sleep(sleep_time);
 	
-	timer_descend(&hour, &minute, &second);
+		timer_descend(&hour, &minute, &second);
 
-	canvas = canvas_resize(&viewport);
+		canvas = canvas_resize(&viewport);
     }
     
     return 0;
@@ -158,10 +158,10 @@ void *input_handling(void *keepRunning)
     int run = *(int*)keepRunning;
 
     while (run) {
-	read(STDIN_FILENO, buf, nbytes);
-	if ((int)buf[0] == 3 || buf[0] == 'q') {
-	    restore_term_state();
-	}
+		read(STDIN_FILENO, buf, nbytes);
+		if ((int)buf[0] == 3 || buf[0] == 'q') {
+			restore_term_state();
+		}
     }
 
     return NULL;
@@ -179,20 +179,20 @@ void restore_term_state(void)
 void timer_descend(int *hour, int *minute, int *second)
 {
     if (*second > 0) {
-	*second -= 1;
+		*second -= 1;
     } else {
-	if (*minute > 0) {
-	    *minute -= 1;
-	    *second = 59;
-	} else {
-	    if (*hour > 0) {
-		*hour -= 1;
-		*minute = 59;
-		*second = 59;
-	    } else {
-		restore_term_state();
-	    }
-	}
+		if (*minute > 0) {
+			*minute -= 1;
+			*second = 59;
+		} else {
+			if (*hour > 0) {
+				*hour -= 1;
+				*minute = 59;
+				*second = 59;
+			} else {
+				restore_term_state();
+			}
+		}
     }
 }
 
@@ -207,11 +207,11 @@ int is_time_in_digit(char *val)
     int len = strlen(val);
     int valid;
     for (int i = 0; i < len; ++i) {
-	if (val[i] >= '0' && val[i] <= '9') {
-	    valid = 1;
-	} else {
-	    valid = 0;
-	}
+		if (val[i] >= '0' && val[i] <= '9') {
+			valid = 1;
+		} else {
+			valid = 0;
+		}
     }
     return valid;
 }
@@ -231,8 +231,8 @@ void parse_config_file(char *buf[5], char *filename)
 
     FILE *config_file = fopen(filename, "r");
     if (config_file == NULL) {
-	perror("tiso");
-	exit(1);
+		perror("tiso");
+		exit(1);
     }
     
     char s[256];
@@ -240,14 +240,14 @@ void parse_config_file(char *buf[5], char *filename)
     int pray_time_text_size = 6;
     while ((fgets(s, 256, config_file)) != NULL) {
         strtok(s, "=");
-	char *prayer_time = strtok(NULL, "=");
-	buf[i] = malloc(pray_time_text_size * sizeof(char));
-	if (buf[i] == NULL) {
-	    perror("tiso");
-	    exit(1);
-	}
-	strcpy(buf[i], prayer_time);
-	++i;
+		char *prayer_time = strtok(NULL, "=");
+		buf[i] = malloc(pray_time_text_size * sizeof(char)); // TODO: Dealloc this... but I guess it doesn't matter
+		if (buf[i] == NULL) {
+			perror("tiso");
+			exit(1);
+		}
+		strcpy(buf[i], prayer_time);
+		++i;
     }
 }
 
@@ -256,21 +256,21 @@ void parse_config_file(char *buf[5], char *filename)
   Return 0 if equal
   Return 1 if time1 > time2
   Return -1 if time1 < time2
- */
+*/
 int compare_hm(int h1, int m1, int h2, int m2)
 {
     if (h1 > h2) {
-	return 1;
+		return 1;
     } else if (h1 < h2) {
-	return -1;
+		return -1;
     } else {
-	if (m1 > m2) {
-	    return 1;
-	} else if (m1 < m2) {
-	    return -1;
-	} else {
-	    return 0;
-	}
+		if (m1 > m2) {
+			return 1;
+		} else if (m1 < m2) {
+			return -1;
+		} else {
+			return 0;
+		}
     }
 }
 
@@ -278,18 +278,18 @@ char *get_prayer_name(int i)
 {
     switch (i) {
     case 0:
-	return "Fajr";
+		return "Fajr";
     case 1:
-	return "Zuhur";
+		return "Zuhur";
     case 2:
-	return "Asr";
+		return "Asr";
     case 3:
-	return "Maghrib";
+		return "Maghrib";
     case 4:
-	return "Isha";
+		return "Isha";
     default:
-	log_errorf("NO SUCH PRAYER EXIST");
-	exit(1);
+		log_errorf("NO SUCH PRAYER EXIST");
+		exit(1);
     }
 }
 
@@ -305,37 +305,59 @@ void parse_pray_time(char *pray_time[5], char *next_pray, int *hour, int *minute
     int curr_minute = timeinfo->tm_min;
 
     // Check and compare with isha (because it has special case)
-    char *isha_prayt = pray_time[4];
-    
+	/*
+	  ...
+	  BUGS
+       Be cautious when using these functions.  If you do use them, note that:
+
+       •  These functions modify their first argument.
+	   ...
+
+	   strtok modify first argument, therefore causing segfault in the for loop below
+	   My solution is just copy the things instead. I don't know if there are any other
+	   solution
+	 */
+	int isha_strlen = strlen(pray_time[4]);
+    char *isha_prayt = malloc(isha_strlen * sizeof(char));
+	if (isha_prayt == NULL) {
+		perror("tiso: isha_prayt cannot be allocated");
+		exit(1);
+	}
+	memcpy(isha_prayt, pray_time[4], isha_strlen);
+
     int ipray_h = atoi(strtok(isha_prayt, ":"));
     int ipray_m = atoi(strtok(NULL, ":"));
+
     int cmp_curr_isha = compare_hm(curr_hour, curr_minute, ipray_h, ipray_m);
     
     /*
       If curr_time < pray_time[i]
       or curr_time > isha
-     */
+	*/
     for (int i = 0; i < 5; ++i) {
-	char *prayt = pray_time[i];
-	int pray_h = atoi(strtok(prayt, ":"));
-	int pray_m = atoi(strtok(NULL, ":"));
+		char *prayt = pray_time[i];
 	
-	int is_currt_larger = compare_hm(curr_hour, curr_minute, pray_h, pray_m);
+		int pray_h = atoi(strtok(prayt, ":"));
+		int pray_m = atoi(strtok(NULL, ":"));
 
-	if (is_currt_larger < 0 || cmp_curr_isha > 0) {
-	    strcpy(next_pray, get_prayer_name(i));
-	    int delta_h = pray_h - curr_hour;
-	    int delta_m = pray_m - curr_minute;
-	    if (delta_m < 0) {
-		delta_m += 60;
-		delta_h -= 1;
-	    }
-	    if (delta_h < 0) {
-		delta_h += 24;
-	    }
-	    *hour = delta_h;
-	    *minute = delta_m;
-	    break;
-	}
+		int is_currt_larger = compare_hm(curr_hour, curr_minute, pray_h, pray_m);
+
+		if (is_currt_larger < 0 || cmp_curr_isha > 0) {
+			strcpy(next_pray, get_prayer_name(i));
+			int delta_h = pray_h - curr_hour;
+			int delta_m = pray_m - curr_minute;
+			if (delta_m < 0) {
+				delta_m += 60;
+				delta_h -= 1;
+			}
+			if (delta_h < 0) {
+				delta_h += 24;
+			}
+			*hour = delta_h;
+			*minute = delta_m;
+			break;
+		}
     }
+
+	free(isha_prayt);
 }
